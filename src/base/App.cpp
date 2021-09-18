@@ -121,9 +121,30 @@ namespace {
 		vector<Vertex> vertices;
 
 		Vertex v0, v1, v2;
-
 		// Generate one face at a time
 		for (auto i = 0u; i < faces; ++i) {
+			float v0xp = FW::cos(angle_increment * i) * radius;
+			float v0yp = FW::sin(angle_increment * i) * radius;
+			float v1xp = FW::cos(angle_increment * (i + 1)) * radius;
+			float v1yp = FW::sin(angle_increment * (i + 1)) * radius;
+			v0.position = { v0xp, 0, v0yp }; // z is zero
+			v1.position = { v1xp, 0, v1yp }; // z is zero
+			v2.position = { 0, 1, 0 }; //fixed
+			Vec3f vec01 = { v1.position[0] - v0.position[0], v1.position[1] - v0.position[1] , v1.position[2] - v0.position[2] };
+			Vec3f vec02 = { v2.position[0] - v0.position[0], v2.position[1] - v0.position[1] , v2.position[2] - v0.position[2] };
+			Vec3f vec10 = { v0.position[0] - v1.position[0], v0.position[1] - v1.position[1] , v0.position[2] - v1.position[2] };
+			Vec3f vec12 = { v2.position[0] - v1.position[0], v2.position[1] - v1.position[1] , v2.position[2] - v1.position[2] };
+			Vec3f vec20 = { v0.position[0] - v2.position[0], v0.position[1] - v2.position[1] , v0.position[2] - v2.position[2] };
+			Vec3f vec21 = { v1.position[0] - v2.position[0], v1.position[1] - v2.position[1] , v1.position[2] - v2.position[2] };
+			Vec3f n0 = FW::cross(vec01, vec02);
+			n0.normalize();
+			Vec3f n1 = FW::cross(vec10, vec12);
+			n1.normalize();
+			Vec3f n2 = FW::cross(vec20, vec21);
+			n2.normalize();
+			v0.normal = n0;
+			v1.normal = n1;
+			v2.normal = n2;
 			// YOUR CODE HERE (R2)
 			// Figure out the correct positions of the three vertices of this face.
 			// v0.position = ...
@@ -133,6 +154,8 @@ namespace {
 			// Some hints:
 			// - Try just making a triangle in fixed coordinates at first.
 			// - "FW::cos(angle_increment * i) * radius" gives you the X-coordinate
+			//    of the ith vertex at the base of the cone. Z-coordinate is very similar.
+			// - "FW::sin(angle_increment * i) * radius" gives you the Y-coordinate
 			//    of the ith vertex at the base of the cone. Z-coordinate is very similar.
 			// - For the normal calculation, you'll want to use the cross() function for
 			//   cross product, and Vec3f's .normalized() or .normalize() methods.
