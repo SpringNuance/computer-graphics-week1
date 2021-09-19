@@ -483,6 +483,8 @@ vector<Vertex> App::loadObjFileModel(string filename) {
 	while (getline(input, line)) {
 		// Replace any '/' characters with spaces ' ' so that all of the
 		// values we wish to read are separated with whitespace.
+	
+
 		for (auto& c : line)
 			if (c == '/')
 				c = ' ';
@@ -499,21 +501,57 @@ vector<Vertex> App::loadObjFileModel(string filename) {
 		// It identifies the type of object (vertex or normal or ...)
 		iss >> s;
 
+		/*
+		static const Vec3f point_data[] = {
+			Vec3f(0.0f, 0.407f, 0.0f),
+			Vec3f(0.0f, -0.3f, -0.5f),
+			Vec3f(0.433f, -0.3f, 0.25f),
+			Vec3f(-0.433f, -0.3f, 0.25f),
+		};
+		static const Vec3f normal_data[] = {
+			Vec3f(0.8165f, 0.3334f, -0.4714f),
+			Vec3f(0.0f, 0.3334f, 0.9428f),
+			Vec3f(-0.8165f, 0.3334f, -0.4714f),
+			Vec3f(0.0f, -1.0f, 0.0f)
+		};
+		static const unsigned face_data[][6] = {
+			{0, 0, 1, 0, 2, 0},
+			{0, 2, 3, 2, 1, 2},
+			{0, 1, 2, 1, 3, 1},
+			{1, 3, 3, 3, 2, 3}
+		};
+		vector<Vec3f> points(point_data, point_data + SIZEOF_ARRAY(point_data));
+		vector<Vec3f> normals(normal_data, normal_data + SIZEOF_ARRAY(normal_data));
+		vector<array<unsigned, 6>> faces;
+		for (auto arr : face_data) {
+			array<unsigned, 6> f;
+			copy(arr, arr + 6, f.begin());
+			faces.push_back(f);
+		}
+		return unpackIndexedData(points, normals, faces);
+		*/
+
 		if (s == "v") { // vertex position
 			// YOUR CODE HERE (R4)
 			// Read the three vertex coordinates (x, y, z) into 'v'.
+			iss >> v[0] >> v[1] >> v[2];
 			// Store a copy of 'v' in 'positions'.
+			positions.push_back(v);
 			// See std::vector documentation for push_back.
 		}
 		else if (s == "vn") { // normal
-		 // YOUR CODE HERE (R4)
+		     // YOUR CODE HERE (R4)
+			// Read the three vertex coordinates (x, y, z) into 'v'.
+			iss >> v[0] >> v[1] >> v[2];
+			// Store a copy of 'v' in 'normals'.
+			normals.push_back(v);
 		 // Similar to above.
 		}
 		else if (s == "f") { // face
 		 // YOUR CODE HERE (R4)
 		 // Read the indices representing a face and store it in 'faces'.
 		 // The data in the file is in the format
-		 // f v1/vt1/vn1 v2/vt2/vn2 ...
+		 // f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3
 		 // where vi = vertex index, vti = texture index, vni = normal index.
 		 //
 		 // Remember we already replaced the '/' characters with whitespaces.
@@ -528,6 +566,21 @@ vector<Vertex> App::loadObjFileModel(string filename) {
 
 			// It might be a good idea to print the indices to see that they were read correctly.
 			// cout << f[0] << " " << f[1] << " " << f[2] << " " << f[3] << " " << f[4] << " " << f[5] << endl;
+			iss >> f[0];
+			iss >> sink;
+			iss >> f[1];
+
+			iss >> f[2];
+			iss >> sink;
+			iss >> f[3];
+
+			iss >> f[4];
+			iss >> sink;
+			iss >> f[5];
+
+			f[0] -= 1; f[1] -= 1; f[2] -= 1; f[3] -= 1; f[4] -= 1; f[5] -= 1;
+
+			faces.push_back(f);
 		}
 	}
 	common_ctrl_.message(("Loaded mesh from " + filename).c_str());
