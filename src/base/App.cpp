@@ -53,7 +53,8 @@ namespace {
 	vector<Vertex> unpackIndexedData(
 		const vector<Vec3f>& positions,
 		const vector<Vec3f>& normals,
-		const vector<array<unsigned, 6>>& faces)
+		const vector<array<unsigned, 6>>& faces
+	)
 	{
 		vector<Vertex> vertices;
 
@@ -72,7 +73,21 @@ namespace {
 			// f[1] is the index of the normal of the first vertex
 			// f[2] is the index of the position of the second vertex
 			// ...
+			
+			Vertex v0;
+			v0.position = positions[f[0]];
+			v0.normal = normals[f[1]];
+			Vertex v1;
+			v1.position = positions[f[2]];
+			v1.normal = normals[f[3]];
+			Vertex v2;
+			v2.position = positions[f[4]];
+			v2.normal = normals[f[5]];
+			vertices.push_back(v0); 
+			vertices.push_back(v1); 
+			vertices.push_back(v2);
 		}
+
 
 		return vertices;
 	};
